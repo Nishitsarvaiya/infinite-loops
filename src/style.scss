@@ -69,16 +69,13 @@ body {
 	}
 
 	&__item {
-		min-width: clamp(150px, 20vw, 300px);
-		aspect-ratio: 3 / 2;
 		color: var(--fg);
-		font-size: clamp(1.5rem, 10vw, 3rem);
+		font-size: clamp(3rem, 20vw, 10rem);
 		font-weight: 500;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin-right: 0.5em;
-		border: 1px solid var(--gray);
+		margin-right: 0.2ch;
 	}
 
 	&[data-direction="reverse"] {
