@@ -1,0 +1,109 @@
+@font-face {
+	font-family: 'PP Neue Montreal';
+	src: url('/fonts/PPNeueMontreal-Book.otf') format('opentype');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'PP Neue Montreal';
+	src: url('/fonts/PPNeueMontreal-Medium.otf') format('opentype');
+	font-weight: 500;
+}
+
+:root {
+	--bg: #ececec;
+	--fg: #011118;
+	--accent: #0051ff;
+	--gray: #8f8f8f;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html,
+body {
+	background: var(--bg);
+	color: var(--fg);
+	font-family:
+		'PP Neue Montreal',
+		'Inter',
+		system-ui,
+		-apple-system,
+		sans-serif;
+	-webkit-font-smoothing: antialiased;
+	overflow: hidden;
+}
+
+#app {
+	width: 1126px;
+	max-width: 100%;
+	margin: 0 auto;
+	text-align: center;
+	border-inline: 1px solid var(--gray);
+	min-height: 100svh;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.marquee {
+	--direction: forwards;
+	--duration: 5s;
+	width: 100%;
+
+	&__track {
+		width: max-content;
+		display: flex;
+		align-items: center;
+		animation-name: loop;
+		animation-direction: var(--direction);
+		animation-timing-function: linear;
+		animation-duration: var(--duration);
+		animation-iteration-count: infinite;
+		will-change: transform;
+	}
+
+	&__item {
+		min-width: clamp(150px, 20vw, 300px);
+		aspect-ratio: 3 / 2;
+		color: var(--fg);
+		font-size: clamp(1.5rem, 10vw, 3rem);
+		font-weight: 500;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-right: 0.5em;
+		border: 1px solid var(--gray);
+	}
+
+	&[data-direction="reverse"] {
+		--direction: reverse;
+	}
+
+	&[data-speed="slow"] {
+		--duration: 20s;
+	}
+
+	&[data-speed="medium"] {
+		--duration: 10s;
+	}
+
+	&[data-speed="fast"] {
+		--duration: 5s;
+	}
+}
+
+@keyframes loop {
+	0% {
+		transform: translateX(0);
+	}
+
+	100% {
+		transform: translateX(-50%);
+	}
+}
