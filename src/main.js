@@ -8,7 +8,11 @@ function loop(now) {
 	const dt = (now - last) / 1000;
 	last = now;
 	x -= v * dt;
-	if (x <= -period) x += period;
+	// Snap reset (CSS style)
+	// if (x <= -period) x += period;
+
+	// Modulo Wrap (GSAP.utils.wrap style)
+	x = (((x % period) - period) % period) + period * 0;
 	track.style.transform = `translateX(${x}px)`;
 	requestAnimationFrame(loop);
 }
