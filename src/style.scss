@@ -58,11 +58,12 @@ body {
 		width: max-content;
 		display: flex;
 		align-items: center;
-		will-change: transform;
+		position: relative;
 	}
 
 	&__item {
-		min-width: clamp(150px, 20vw, 300px);
+		position: absolute;
+		width: clamp(150px, 20vw, 300px);
 		aspect-ratio: 3 / 2;
 		color: var(--fg);
 		font-size: clamp(1.5rem, 10vw, 3rem);
@@ -70,7 +71,7 @@ body {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin-right: 0.5em;
 		border: 1px solid var(--gray);
+		will-change: transform;
 	}
 }

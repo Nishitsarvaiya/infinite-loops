@@ -1,19 +1,32 @@
-const track = document.querySelector('.marquee__track');
-let x = 0;
+// const track = document.querySelector('.marquee__track');
+const GAP = 10;
+const items = Array.from(document.querySelectorAll('.marquee__item'));
+let itemWidth = items[0].offsetWidth + GAP;
+let positions = items.map((_, idx) => idx * itemWidth);
+const total = items.length;
+let trackWidth = itemWidth * total;
 let last = performance.now();
-let v = 400;
-let period = track.offsetWidth / 2;
+let v = 200;
 
 function loop(now) {
 	const dt = (now - last) / 1000;
 	last = now;
-	x -= v * dt;
-	// Snap reset (CSS style)
-	// if (x <= -period) x += period;
+	const dx = v * dt;
 
-	// Modulo Wrap (GSAP.utils.wrap style)
-	x = (((x % period) - period) % period) + period * 0;
-	track.style.transform = `translateX(${x}px)`;
+	for (let i = 0; i < total; i++) {
+		// for left
+		positions[i] -= dx;
+		if (positions[i] + itemWidth < 0) {
+			positions[i] += trackWidth;
+		}
+
+		// for right
+		// positions[i] += dx;
+		// if (positions[i] + itemWidth > trackWidth) {
+		// 	positions[i] -= trackWidth;
+		// }
+		items[i].style.transform = `translateX(${positions[i]}px)`;
+	}
 	requestAnimationFrame(loop);
 }
 
