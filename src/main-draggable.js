@@ -32,7 +32,6 @@ function measure() {
 function onWheel(e) {
 	e.preventDefault();
 	target += e.deltaY;
-	console.log(target);
 }
 
 function frame(now) {
