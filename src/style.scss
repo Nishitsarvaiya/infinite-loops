@@ -48,11 +48,12 @@ body {
 	justify-content: center;
 	flex-direction: column;
 	box-sizing: border-box;
-	// overflow: hidden;
+	overflow: hidden;
 }
 
 .marquee {
 	width: 100%;
+	touch-action: pan-y;
 
 	&__track {
 		// width: fit-content;
