@@ -1,52 +1,62 @@
 import gsap from 'gsap';
-import { Draggable } from 'gsap/Draggable';
-import InertiaPlugin from 'gsap/InertiaPlugin';
-gsap.registerPlugin(Draggable, InertiaPlugin);
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
 
-const GAP = 16; // must match --gap
+const GAP = 16;
+const container = document.querySelector('#app');
 const items = gsap.utils.toArray('.marquee__item');
-let total, itemWidth, totalWidth, wrapPos, loop;
-const proxy = document.createElement('div'); // holds the single scroll offset
-let offset = 0;
+let last = performance.now();
+let total, itemWidth, totalWidth, wrapPos;
+let target = 0,
+	current = 0;
 
+// PER-FRAME: cheap, runs on every scroll tick. NO refresh, NO re-measure.
 function render() {
+	gsap.set(items, {
+		x: (i) => wrapPos(i * itemWidth + current),
+	});
+}
+
+// BUILD / RESIZE: runs rarely. Measures, derives, then refreshes ONCE.
+function measure() {
 	total = items.length;
 	itemWidth = items[0].offsetWidth + GAP;
 	totalWidth = itemWidth * total;
 	wrapPos = gsap.utils.wrap(-itemWidth, totalWidth - itemWidth);
 
-	gsap.set(items, {
-		x: (i) => wrapPos(i * itemWidth + offset),
-	});
+	current = wrapPos(current);
+	target = wrapPos(target);
+	render(); // lay out once with current offset
 }
 
-const draggable = Draggable.create(proxy, {
-	trigger: '.marquee',
-	type: 'x',
-	inertia: true, // enable momentum on release
-	throwResistance: 4000,
-	onPress() {
-		gsap.killTweensOf(proxy); // stop any active inertia when grabbed again
-	},
-	onDrag() {
-		offset = this.x; // pointer delta → offset (this.x is the proxy's x)
-		render();
-	},
-	onThrowUpdate() {
-		offset = this.x; // inertia frames drive the SAME offset
-		render();
-	},
-	// inertia: {
-	// 	// physics knobs
-	// 	resistance: 200, // higher = stops sooner (your friction slider, inverted)
-	// },
-});
+function onWheel(e) {
+	e.preventDefault();
+	target += e.deltaY;
+	console.log(target);
+}
+
+function frame(now) {
+	const dt = (now - last) / 1000;
+	last = now;
+
+	const k = 1 - Math.pow(1 - 0.08, dt * 60);
+	current += (target - current) * k;
+
+	render();
+	requestAnimationFrame(frame);
+}
 
 let pending = 0;
 function onResize() {
 	cancelAnimationFrame(pending);
-	pending = requestAnimationFrame(render);
+	pending = requestAnimationFrame(measure); // collapse a burst into one rebuild
 }
-window.addEventListener('resize', onResize);
 
-render();
+window.addEventListener('resize', onResize);
+container.addEventListener('wheel', onWheel, { passive: false });
+
+measure();
+requestAnimationFrame((t) => {
+	last = t;
+	frame(t);
+});
