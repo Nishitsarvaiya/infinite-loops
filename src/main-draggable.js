@@ -4,6 +4,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const GAP = 16;
 const DRAG_MULTIPLIER = 2.4;
+const FRICTION = 0.94;
 const container = document.querySelector('#app');
 const items = gsap.utils.toArray('.marquee__item');
 let last = performance.now();
@@ -11,7 +12,9 @@ let total, itemWidth, totalWidth, wrapPos, wheelStop;
 let target = 0,
 	current = 0,
 	isDragging = false,
-	lastPointerX = 0;
+	lastPointerX = 0,
+	velocity = 0,
+	lastMoveTime = 0;
 
 // PER-FRAME: cheap, runs on every scroll tick. NO refresh, NO re-measure.
 function render() {
@@ -46,15 +49,22 @@ function onWheel(e) {
 function onPointerDown(e) {
 	isDragging = true;
 	lastPointerX = e.clientX;
+	lastMoveTime = performance.now();
+	velocity = 0;
 	container.setPointerCapture(e.pointerId);
 	container.style.cursor = 'grabbing';
 }
 
 function onPointerMove(e) {
 	if (!isDragging) return;
+	const now = performance.now();
 	const dx = e.clientX - lastPointerX;
+	const dt = now - lastMoveTime;
 	target += dx * DRAG_MULTIPLIER;
+
+	if (dt > 0) velocity = dx / dt;
 	lastPointerX = e.clientX;
+	lastMoveTime = now;
 }
 
 function onPointerUp(e) {
@@ -62,7 +72,11 @@ function onPointerUp(e) {
 	isDragging = false;
 	container.releasePointerCapture(e.pointerId);
 	container.style.cursor = 'auto';
-	snapTarget();
+
+	const vFrame = velocity * (1000 / 60);
+	const projected = target + vFrame * (1 / (1 - FRICTION));
+
+	target = Math.round(projected / itemWidth) * itemWidth;
 }
 
 function frame(now) {
