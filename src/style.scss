@@ -11,10 +11,10 @@
 }
 
 :root {
-	--bg: #ececec;
+	--bg: hsl(0, 0%, 100%);
 	--fg: #011118;
 	--accent: #0051ff;
-	--gray: #8f8f8f;
+	--gray: hsl(0, 0%, 76%);
 }
 
 * {
@@ -42,20 +42,20 @@ body {
 	max-width: 100%;
 	margin: 0 auto;
 	text-align: center;
-	border-inline: 1px solid var(--gray);
+	border-inline: 1px solid var(--accent);
 	min-height: 100svh;
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
 	box-sizing: border-box;
-	overflow: hidden;
+	// overflow: hidden;
 }
 
 .marquee {
 	width: 100%;
 
 	&__track {
-		width: max-content;
+		// width: fit-content;
 		display: flex;
 		align-items: center;
 		position: relative;
@@ -63,7 +63,7 @@ body {
 
 	&__item {
 		position: absolute;
-		width: clamp(150px, 20vw, 300px);
+		width: calc(100% / 3.75);
 		aspect-ratio: 3 / 2;
 		color: var(--fg);
 		font-size: clamp(1.5rem, 10vw, 3rem);
